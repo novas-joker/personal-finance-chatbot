@@ -1,0 +1,37 @@
+# Git files
+.git/
+.github/
+.gitignore
+.gitattributes
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Local development
+.env.local
+.env.development
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Documentation and test files
+README.md
+tests/
+docs/ 

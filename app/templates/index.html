@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Personal Finance Assistant - Chat{% endblock %}
+
+{% block additional_head %}
+<style>
+    .chat-container {
+        height: 60vh;
+        overflow-y: auto;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        border: 1px solid #dee2e6;
+        padding: 1rem;
+    }
+    
+    .message {
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        border-radius: 10px;
+        max-width: 80%;
+    }
+    
+    .user-message {
+        background-color: #007bff;
+        color: white;
+        margin-left: auto;
+    }
+    
+    .bot-message {
+        background-color: #e9ecef;
+        color: #343a40;
+    }
+    
+    .message-input {
+        border-radius: 20px;
+    }
+    
+    .typing-indicator {
+        display: none;
+        font-style: italic;
+        color: #6c757d;
+        margin-top: 0.5rem;
+    }
+    
+    .send-btn {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="fas fa-robot me-2"></i>Finance Assistant Chat</h3>
+            </div>
+            <div class="card-body">
+                <div class="chat-container" id="chat-container">
+                    <div class="message bot-message">
+                        <p>Hello! I'm your personal finance assistant. I can help you with budgeting, investments, and financial news. How can I assist you today?</p>
+                    </div>
+                </div>
+                <div class="typing-indicator" id="typing-indicator">
+                    Assistant is typing...
+                </div>
+                <div class="mt-3">
+                    <form id="chat-form" class="d-flex">
+                        <input type="text" id="user-input" class="form-control message-input me-2" placeholder="Type your message here...">
+                        <button type="submit" class="btn btn-primary send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+                <div class="mt-3 text-center">
+                    <p class="text-muted">Try asking about: 
+                        <a href="#" class="suggestion">budgeting apps</a>, 
+                        <a href="#" class="suggestion">investment strategies</a>, or 
+                        <a href="#" class="suggestion">latest financial news</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Handle form submission
+        $('#chat-form').submit(function(e) {
+            e.preventDefault();
+            
+            // Get user input
+            const userInput = $('#user-input').val().trim();
+            if (!userInput) return;
+            
+            // Clear input field
+            $('#user-input').val('');
+            
+            // Add user message to chat
+            addMessage(userInput, 'user');
+            
+            // Show typing indicator
+            $('#typing-indicator').show();
+            
+            // Scroll to the bottom
+            scrollToBottom();
+            
+            // Send message to backend
+            $.ajax({
+                url: '/chat',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ message: userInput }),
+                success: function(response) {
+                    // Hide typing indicator
+                    $('#typing-indicator').hide();
+                    
+                    // Add bot response to chat
+                    addMessage(response.response, 'bot');
+                    
+                    // Scroll to the bottom
+                    scrollToBottom();
+                },
+                error: function(error) {
+                    // Hide typing indicator
+                    $('#typing-indicator').hide();
+                    
+                    // Add error message
+                    addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+                    
+                    // Scroll to the bottom
+                    scrollToBottom();
+                    
+                    console.error('Error:', error);
+                }
+            });
+        });
+        
+        // Handle suggestion clicks
+        $('.suggestion').click(function(e) {
+            e.preventDefault();
+            const suggestion = $(this).text();
+            $('#user-input').val(suggestion);
+            $('#chat-form').submit();
+        });
+        
+        // Function to add a message to the chat
+        function addMessage(message, sender) {
+            const messageClass = sender === 'user' ? 'user-message' : 'bot-message';
+            
+            // Process multiline text and URLs
+            const formattedMessage = message
+                .replace(/\n/g, '<br>')
+                .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+            
+            const messageHtml = `
+                <div class="message ${messageClass}">
+                    <p>${formattedMessage}</p>
+                </div>
+            `;
+            
+            $('#chat-container').append(messageHtml);
+        }
+        
+        // Function to scroll to the bottom of the chat container
+        function scrollToBottom() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    });
+</script>
+{% endblock %} 

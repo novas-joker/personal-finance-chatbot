@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Budgeting Tools{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="mb-4"><i class="fas fa-wallet me-2"></i>Budgeting Tools</h1>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Recommended Budgeting Apps</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <h4>Mint</h4>
+                                <p>Free budgeting app that connects to your accounts and helps track spending.</p>
+                                <a href="https://mint.intuit.com/" class="btn btn-primary" target="_blank">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <h4>Personal Capital</h4>
+                                <p>Free financial dashboard that includes budgeting and investment tracking tools.</p>
+                                <a href="https://www.personalcapital.com/" class="btn btn-primary" target="_blank">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <h4>YNAB</h4>
+                                <p>Budgeting app focused on giving every dollar a job using a zero-based budget approach.</p>
+                                <a href="https://www.ynab.com/" class="btn btn-primary" target="_blank">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">50/30/20 Budget Calculator</h3>
+            </div>
+            <div class="card-body">
+                <p class="lead">The 50/30/20 rule suggests spending 50% of your income on needs, 30% on wants, and 20% on savings.</p>
+                
+                <form id="budget-calculator">
+                    <div class="mb-3">
+                        <label for="monthly-income" class="form-label">Monthly After-Tax Income ($)</label>
+                        <input type="number" class="form-control" id="monthly-income" placeholder="Enter your monthly income">
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5>Needs (50%)</h5>
+                                    <p class="lead" id="needs-amount">$0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5>Wants (30%)</h5>
+                                    <p class="lead" id="wants-amount">$0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5>Savings (20%)</h5>
+                                    <p class="lead" id="savings-amount">$0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-primary" id="calculate-btn">Calculate</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Handle calculate button click
+        $('#calculate-btn').click(function() {
+            const monthlyIncome = parseFloat($('#monthly-income').val()) || 0;
+            
+            // Calculate 50/30/20 budget
+            const needs = monthlyIncome * 0.5;
+            const wants = monthlyIncome * 0.3;
+            const savings = monthlyIncome * 0.2;
+            
+            // Update the displayed amounts
+            $('#needs-amount').text('$' + needs.toFixed(2));
+            $('#wants-amount').text('$' + wants.toFixed(2));
+            $('#savings-amount').text('$' + savings.toFixed(2));
+        });
+        
+        // Update amounts as user types
+        $('#monthly-income').on('input', function() {
+            $('#calculate-btn').click();
+        });
+    });
+</script>
+{% endblock %} 
